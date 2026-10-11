@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     RELOAD: bool = False
     LOG_LEVEL: str = "INFO"
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    CORS_ORIGIN_REGEX: str | None = None  # e.g. preview deploys: https://myapp-[a-z0-9-]*\.onrender\.com
 
     # Model files (ONNX)
     YOLO_MODEL_PATH: str = "models/yolo11n.onnx"

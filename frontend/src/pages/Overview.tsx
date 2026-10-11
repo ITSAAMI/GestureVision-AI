@@ -6,7 +6,7 @@ import { useBackendHealth, useSystemStatus } from '../app/useBackend';
 import { Badge, type Tone } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { Callout, EmptyState, Skeleton, Stat } from '../components/ui/Feedback';
-import { api } from '../lib/api';
+import { api, IS_REMOTE_BACKEND } from '../lib/api';
 import { formatDuration, formatRelative } from '../lib/format';
 import { useVision, type ModelState } from '../store/visionStore';
 
@@ -114,10 +114,17 @@ export default function Overview() {
 
       {health.isError && (
         <div className="mb-6">
-          <Callout tone="danger" title="Backend is offline">
-            Start it with <code className="num rounded bg-white/10 px-1.5 py-0.5 text-xs text-fg">cd backend && python main.py</code>. Hand
-            tracking, pose and the Particle Studio still work without it.
-          </Callout>
+          {IS_REMOTE_BACKEND ? (
+            <Callout tone="warning" title="Detection server is waking up">
+              The free server sleeps when idle and takes about a minute to start. Hand tracking, gestures, pose and the
+              Particle Studio already work — they run right here in your browser.
+            </Callout>
+          ) : (
+            <Callout tone="danger" title="Backend is offline">
+              Start it with <code className="num rounded bg-white/10 px-1.5 py-0.5 text-xs text-fg">cd backend && python main.py</code>. Hand
+              tracking, pose and the Particle Studio still work without it.
+            </Callout>
+          )}
         </div>
       )}
       {missing.length > 0 && (

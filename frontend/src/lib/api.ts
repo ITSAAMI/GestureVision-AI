@@ -1,5 +1,19 @@
 /** Typed client for the GestureVision FastAPI backend (proxied at /api in development). */
 
+/**
+ * Backend origin. Empty = same origin (Vite dev proxy, or the backend serving the
+ * built app). Set VITE_API_URL (e.g. https://api.gvisionai.tech) for split deploys.
+ */
+export const API_BASE: string = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+export const IS_REMOTE_BACKEND = API_BASE !== '';
+
+export const apiUrl = (path: string) => `${API_BASE}${path}`;
+
+export function wsUrl(path: string): string {
+  if (API_BASE) return API_BASE.replace(/^http/, 'ws') + path;
+  return `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}${path}`;
+}
+
 export interface ModelInfo {
   name: string;
   task: string;
@@ -129,12 +143,17 @@ export class ApiError extends Error {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(path, {
+    res = await fetch(apiUrl(path), {
       ...init,
       headers: init?.body && !(init.body instanceof FormData) ? { 'Content-Type': 'application/json', ...init?.headers } : init?.headers,
     });
   } catch {
-    throw new ApiError(0, 'Backend is unreachable. Is the server running on port 8000?');
+    throw new ApiError(
+      0,
+      IS_REMOTE_BACKEND
+        ? 'Detection server is starting up (free hosting sleeps when idle). Try again in a minute.'
+        : 'Backend is unreachable. Is the server running on port 8000?',
+    );
   }
   if (!res.ok) {
     let message = `${res.status} ${res.statusText}`;
@@ -185,7 +204,7 @@ export const api = {
       const form = new FormData();
       form.append('file', file);
       form.append('sample_fps', String(sampleFps));
-      xhr.open('POST', '/api/video/upload');
+      xhr.open('POST', apiUrl('/api/video/upload'));
       xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
       xhr.onload = () => {
         let body: { detail?: string } & Partial<VideoAnalysis> = {};

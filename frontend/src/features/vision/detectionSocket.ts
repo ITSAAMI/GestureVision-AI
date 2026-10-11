@@ -1,3 +1,4 @@
+import { wsUrl } from '../../lib/api';
 import type { LinkState } from '../../store/visionStore';
 import type { FrameAnalysis, ServerHello } from './types';
 
@@ -56,8 +57,7 @@ export class DetectionSocket {
   private open(): void {
     window.clearTimeout(this.timer);
     this.onState?.('connecting');
-    const url = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/detect`;
-    const ws = new WebSocket(url);
+    const ws = new WebSocket(wsUrl('/ws/detect'));
     this.ws = ws;
 
     ws.onopen = () => {

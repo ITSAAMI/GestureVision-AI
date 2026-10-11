@@ -6,7 +6,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Card, PageHeader } from '../components/ui/Card';
 import { Callout, ProgressBar, Skeleton, Stat } from '../components/ui/Feedback';
-import { api } from '../lib/api';
+import { api, IS_REMOTE_BACKEND } from '../lib/api';
 import { formatDuration } from '../lib/format';
 import { useVision } from '../store/visionStore';
 
@@ -62,7 +62,11 @@ export default function SystemHealth() {
 
       {offline && (
         <div className="mb-4">
-          <Callout tone="danger" title="Backend unreachable">Start it with <code className="num text-fg">cd backend && python main.py</code></Callout>
+          {IS_REMOTE_BACKEND ? (
+            <Callout tone="warning" title="Detection server is waking up">Free hosting sleeps when idle — it takes about a minute to start.</Callout>
+          ) : (
+            <Callout tone="danger" title="Backend unreachable">Start it with <code className="num text-fg">cd backend && python main.py</code></Callout>
+          )}
         </div>
       )}
 

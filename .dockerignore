@@ -1,0 +1,16 @@
+.git
+.claude
+.vscode
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+frontend/dist
+frontend/public/models
+backend/.env
+backend/data
+backend/uploads
+backend/models/*.onnx
+*.exe
+*.ilk
+*.obj
+*.pdb

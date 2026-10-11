@@ -7,7 +7,7 @@ import { Card, PageHeader } from '../components/ui/Card';
 import { Segmented } from '../components/ui/Controls';
 import { ConfirmDialog, EmptyState, ProgressBar, Skeleton, Stat } from '../components/ui/Feedback';
 import { trackColor } from '../features/vision/drawing';
-import { api, type VideoAnalysis as Video, type VideoResults } from '../lib/api';
+import { api, apiUrl, type VideoAnalysis as Video, type VideoResults } from '../lib/api';
 import { cn, formatBytes, formatDuration, formatRelative, formatTimecode } from '../lib/format';
 import { toast } from '../store/toastStore';
 import { VideoStatusBadge } from './Overview';
@@ -165,7 +165,7 @@ function Detail({ id, onDeleted }: { id: string; onDeleted: () => void }) {
           <div className="grid gap-4 lg:grid-cols-2">
             <Card title="Peak moment" icon={ImageIcon} bodyClassName="p-3">
               {r.has_peak_frame ? (
-                <img src={`/api/video/${id}/peak.jpg`} alt="Annotated frame with the most people" className="w-full rounded-lg border border-line" />
+                <img src={apiUrl(`/api/video/${id}/peak.jpg`)} alt="Annotated frame with the most people" className="w-full rounded-lg border border-line" />
               ) : (
                 <p className="text-sm text-muted">No people were detected.</p>
               )}
@@ -327,7 +327,7 @@ export default function VideoAnalysis() {
                     >
                       <span className="grid h-10 w-16 shrink-0 place-items-center overflow-hidden rounded-md bg-black">
                         <img
-                          src={`/api/video/${v.id}/thumbnail.jpg`}
+                          src={apiUrl(`/api/video/${v.id}/thumbnail.jpg`)}
                           alt=""
                           className="size-full object-cover"
                           onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}

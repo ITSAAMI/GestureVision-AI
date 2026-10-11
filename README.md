@@ -84,6 +84,21 @@ On Windows you can start everything with `.\scripts\start.ps1`.
 
 **Single-process mode:** run `npm run build` in `frontend/`, then `python backend/main.py` serves the app at http://127.0.0.1:8000.
 
+## Deploy (free)
+
+The repo includes a [Render Blueprint](render.yaml) that deploys both parts on Render's free tier:
+
+| Service | What | URL |
+|---|---|---|
+| `gesturevision` | Static React build (`frontend/`), always on | https://gvisionai.tech |
+| `gesturevision-api` | FastAPI backend in Docker ([backend/Dockerfile](backend/Dockerfile)), models baked in | https://api.gvisionai.tech |
+
+1. Render → **New → Blueprint** → select this repository → **Apply**.
+2. Point DNS at Render (shown under each service's *Custom Domains*): `api` and `www` as CNAMEs, the apex as an A record.
+3. The frontend reads the backend address from `VITE_API_URL` at build time.
+
+Free web services sleep after ~15 minutes idle and wake in about a minute; browser-side features (hands, gestures, pose, Particle Studio) work immediately. Data on the free backend is ephemeral (it resets on redeploy).
+
 ## Gestures
 
 | Gesture | Particle Studio action |

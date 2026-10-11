@@ -1,0 +1,46 @@
+# Render Blueprint: deploys the whole app on Render's free tier.
+#   gvisionai.tech / www  -> static React frontend (always on)
+#   api.gvisionai.tech    -> FastAPI detection backend (Docker, sleeps when idle)
+services:
+  - type: web
+    name: gesturevision-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: CORS_ORIGINS
+        value: '["https://gvisionai.tech","https://www.gvisionai.tech"]'
+      - key: CORS_ORIGIN_REGEX
+        value: 'https://gesturevision[a-z0-9-]*\.onrender\.com'
+      - key: MAX_DETECTION_FPS
+        value: "5"
+      - key: MAX_VIDEO_SIZE_MB
+        value: "100"
+    domains:
+      - api.gvisionai.tech
+
+  - type: web
+    name: gesturevision
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        value: https://api.gvisionai.tech
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /mediapipe/*
+        name: Cache-Control
+        value: public, max-age=604800
+    domains:
+      - gvisionai.tech
+      - www.gvisionai.tech
