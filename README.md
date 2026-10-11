@@ -84,20 +84,18 @@ On Windows you can start everything with `.\scripts\start.ps1`.
 
 **Single-process mode:** run `npm run build` in `frontend/`, then `python backend/main.py` serves the app at http://127.0.0.1:8000.
 
-## Deploy (free)
+## Deploy
 
-The repo includes a [Render Blueprint](render.yaml) that deploys both parts on Render's free tier:
+Live at **https://gvisionai.tech**.
 
-| Service | What | URL |
+| Part | Host | How |
 |---|---|---|
-| `gesturevision` | Static React build (`frontend/`), always on | https://gvisionai.tech |
-| `gesturevision-api` | FastAPI backend in Docker ([backend/Dockerfile](backend/Dockerfile)), models baked in | https://api.gvisionai.tech |
+| Frontend (static React build) | GitHub Pages, custom domain `gvisionai.tech` | `VITE_API_URL=https://api.gvisionai.tech scripts/deploy-pages.sh` builds and publishes the `gh-pages` branch |
+| Backend (FastAPI + ONNX models, Docker) | Render free web service, `api.gvisionai.tech` | [render.yaml](render.yaml) + [backend/Dockerfile](backend/Dockerfile) (models baked into the image) |
 
-1. Render → **New → Blueprint** → select this repository → **Apply**.
-2. Point DNS at Render (shown under each service's *Custom Domains*): `api` and `www` as CNAMEs, the apex as an A record.
-3. The frontend reads the backend address from `VITE_API_URL` at build time.
+DNS: four `A` records for the apex pointing to GitHub Pages (`185.199.108-111.153`), `www` → `itsaami.github.io`, and `api` → the Render service as a `CNAME`.
 
-Free web services sleep after ~15 minutes idle and wake in about a minute; browser-side features (hands, gestures, pose, Particle Studio) work immediately. Data on the free backend is ephemeral (it resets on redeploy).
+The free backend sleeps after ~15 minutes idle and wakes in about a minute; browser-side features (hands, gestures, pose, Particle Studio) work immediately. Backend data is ephemeral on the free plan.
 
 ## Gestures
 
