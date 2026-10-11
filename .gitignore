@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+.venv/
+.env
+
+# Model weights (downloaded by scripts/download_models.py)
+backend/models/*.onnx
+frontend/public/models/*.task
+
+# Runtime data
+backend/data/
+backend/uploads/
+
+# Node
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
+
+# IDE / tools
+.vscode/
+.idea/
+.claude/
+*.swp
+*.swo
+
+# Stray native build artifacts
+*.exe
+*.ilk
+*.obj
+*.pdb
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
